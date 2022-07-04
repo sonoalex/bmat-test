@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+</head>
+<body>
+    <h1>Upload task!</h1>
+    <div id="myId">
+        <form action="http://127.0.0.1:8000/task/upload" method="PUT" class="dropzone" >
+
+        </form>
+    </div>
+
+    
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        let myDropzone = new Dropzone("div#myId",  {
+            url: "/api/ChunkedUpload",  
+            params: function (files, xhr, chunk) {
+                if (chunk) {
+                    return {
+                        name: chunk.file.name,
+                        
+                    };
+                }
+            },
+            parallelUploads: 1,  // since we're using a global 'currentFile', we could have issues if parallelUploads > 1, so we'll make it = 1
+            maxFilesize: 1024,   // max individual file size 1024 MB
+            chunking: true,      // enable chunking
+            forceChunking: true, // forces chunking when file.size < chunkSize
+            parallelChunkUploads: true, // allows chunks to be uploaded in parallel (this is independent of the parallelUploads option)
+            chunkSize: 1000000,  // chunk size 1,000,000 bytes (~1MB)
+            retryChunks: true,   // retry chunks on failure
+            retryChunksLimit: 3, // retry maximum of 3 times (default is 3)
+            chunksUploaded: function (file, done) {
+                // All chunks have been uploaded. Perform any other actions
+                currentFile = file;
+            }
+        });
+            
+
+
+    </script>
+</body>
+</html>
